@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tensor Flow JS demo</title>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+	<script lang="js">
+        async function doTraining(model){
+            const history = 
+                  await model.fit(xs, ys, 
+                        { epochs: 500,
+                          callbacks:{
+                              onEpochEnd: async(epoch, logs) =>{
+                                  console.log("Epoch:" 
+                                              + epoch 
+                                              + " Loss:" 
+                                              + logs.loss);
+                                  
+                              }
+                          }
+                        });
+        }
+        const model = tf.sequential();
+        model.add(tf.layers.dense({units: 1, inputShape: [1]}));
+        model.compile({loss:'meanSquaredError', 
+                       optimizer:'sgd'});
+        model.summary();
+        const xs = tf.tensor2d([-1.0, 0.0, 1.0, 2.0, 3.0, 4.0], [6, 1]);
+        const ys = tf.tensor2d([-3.0, -1.0, 2.0, 3.0, 5.0, 7.0], [6, 1]);
+        
+        doTraining(model)
+
+        function predictValue(){
+            debugger;
+            var inputValue = parseFloat(document.getElementById("inputParam").value);
+            const res = model.predict(tf.tensor2d([inputValue], [1,1]));
+            alert(res);
+        }
+    </script>
+</head>
+<body>
+    <h1 align="center">In this Example, we’re going to build a model<br>that infers the relationship between two numbers where <span style='color:red'>y = 2x -1 </span>.</h1>
+    <input type="number" placeholder="Enter number:" id="inputParam"></input><br><br>
+    <button onclick="predictValue();">Predict</button>
+    <br></br>
+    <h5>See the console log for step by step training detail.</h5>
+    
+</body>
+</html>
